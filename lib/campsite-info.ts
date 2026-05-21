@@ -106,3 +106,77 @@ export function getCampsiteInfo(topic: string): string {
   if (handler) return handler()
   return `Pro tuto informaci nás prosím kontaktujte: ${CAMPSITE_INFO.phone} nebo ${CAMPSITE_INFO.email}`
 }
+
+export function buildFullFaqContent(): string {
+  return `
+## Informace o kempu
+
+**Název:** ${CAMPSITE_INFO.name}
+**Adresa:** ${CAMPSITE_INFO.address}
+**Telefon (rezervace):** ${CAMPSITE_INFO.phone} | Záložní: ${CAMPSITE_INFO.phoneFallback}
+**E-mail:** ${CAMPSITE_INFO.email}
+**Web:** ${CAMPSITE_INFO.website}
+**Sezóna:** Otevřeno od ${CAMPSITE_INFO.season}. Recepce ${CAMPSITE_INFO.amenities.reception}
+
+## Ceník 2026
+
+### Chatky a bungalovy (cena za objekt/noc, povlečení v ceně)
+${CAMPSITE_INFO.prices.cottage}
+
+### Mobilheimy (cena za objekt/noc)
+${CAMPSITE_INFO.prices.mobilhome}
+
+### Stany
+${CAMPSITE_INFO.prices.tent}
+
+### Přístřešky
+${CAMPSITE_INFO.prices.shelter}
+
+### Karavany
+${CAMPSITE_INFO.prices.caravan}
+
+### Osoby (příplatek k ceně stání/objektu)
+- ${CAMPSITE_INFO.prices.adult}
+- ${CAMPSITE_INFO.prices.child}
+
+### Příplatky
+- Parkování: ${CAMPSITE_INFO.prices.parking}
+- Elektřina: ${CAMPSITE_INFO.prices.electricity}
+- Domácí zvíře: ${CAMPSITE_INFO.prices.pet}
+- Místní poplatek: ${CAMPSITE_INFO.prices.localFee}
+- Pobyt na 1 noc: ${CAMPSITE_INFO.prices.singleNightSurcharge}
+- ${CAMPSITE_INFO.prices.bedding}
+
+## Vybavení
+
+- **WiFi:** ${CAMPSITE_INFO.amenities.wifiNote}
+- **Parkování:** ${CAMPSITE_INFO.amenities.parking}
+- **Sprchy:** ${CAMPSITE_INFO.amenities.shower}
+- **WC:** ${CAMPSITE_INFO.amenities.toilet}
+- **Elektřina:** ${CAMPSITE_INFO.amenities.electricity}
+- **Bazén:** ${CAMPSITE_INFO.amenities.poolNote}
+- **Stravování:** ${CAMPSITE_INFO.amenities.catering}
+- **Kuchyňka:** ${CAMPSITE_INFO.amenities.kitchen}
+
+## Pravidla
+
+- **Domácí zvířata:** ${CAMPSITE_INFO.pets}
+- **Táborák:** ${CAMPSITE_INFO.campfire}
+- **Noční klid:** ${CAMPSITE_INFO.noise}
+- **Odjezd před 8:00:** ${CAMPSITE_INFO.earlyDeparture}
+
+## Platba a storno
+
+- **Platba:** ${CAMPSITE_INFO.payment}
+- **Storno podmínky:** ${CAMPSITE_INFO.cancellation}
+
+## Okolí a atrakce
+
+${CAMPSITE_INFO.nearbyAttractions.map((a, i) => `${i + 1}. ${a}`).join('\n')}
+
+## Příjezd a odjezd
+
+- **Check-in:** od ${CAMPSITE_INFO.checkIn}
+- **Check-out:** do ${CAMPSITE_INFO.checkOut}
+`.trim()
+}
