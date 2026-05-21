@@ -16,7 +16,7 @@ export const campsiteTools = {
       topic: z.enum([
         'ceny', 'wifi', 'parkování', 'zvířata', 'táborák',
         'příjezd', 'odchod', 'platba', 'storno', 'okolí',
-        'kontakt', 'vybavení', 'sezóna',
+        'kontakt', 'vybavení', 'sezóna', 'bazén', 'stravování',
       ]).describe('Téma dotazu'),
     }),
     outputSchema: z.string(),

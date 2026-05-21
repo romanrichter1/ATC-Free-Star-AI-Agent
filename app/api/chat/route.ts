@@ -1,5 +1,5 @@
 // app/api/chat/route.ts
-import { streamText } from 'ai'
+import { streamText, stepCountIs } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { campsiteTools } from '@/lib/tools'
 import { CAMPSITE_INFO } from '@/lib/campsite-info'
@@ -31,7 +31,7 @@ function isRateLimited(ip: string): boolean {
 }
 
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for') ?? 'unknown'
+  const ip = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
 
   if (isRateLimited(ip)) {
     return new Response('Too many requests', { status: 429 })
@@ -44,6 +44,7 @@ export async function POST(req: NextRequest) {
     system: SYSTEM_PROMPT,
     messages,
     tools: campsiteTools,
+    stopWhen: stepCountIs(5),
     temperature: 0.3,
   })
 

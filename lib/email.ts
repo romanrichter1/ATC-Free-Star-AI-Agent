@@ -1,8 +1,6 @@
 import { Resend } from 'resend'
 import { CAMPSITE_INFO } from './campsite-info'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export interface ReservationDetails {
   guestName: string
   guestEmail: string
@@ -17,6 +15,7 @@ export interface ReservationDetails {
 export async function sendConfirmationEmail(
   details: ReservationDetails
 ): Promise<{ success: boolean; error?: string }> {
+  const resend = new Resend(process.env.RESEND_API_KEY)
   const nights = Math.round(
     (new Date(details.dateTo).getTime() - new Date(details.dateFrom).getTime()) /
     (1000 * 60 * 60 * 24)
