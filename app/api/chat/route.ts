@@ -64,5 +64,5 @@ export async function POST(req: NextRequest) {
     },
   })
 
-  return result.toDataStreamResponse()
+  return result.toUIMessageStreamResponse()
 }
