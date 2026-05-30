@@ -52,26 +52,16 @@ export async function POST(req: NextRequest) {
     return new Response('Invalid JSON', { status: 400 })
   }
 
-  // System prompt as first message with cache_control for Anthropic prompt caching.
-  // The cached prefix must be >2048 tokens (Sonnet 4.6 minimum). Our FAQ-rich
-  // system prompt comfortably exceeds this, so repeated requests reuse the cache.
-  const allMessages = [
-    {
-      role: 'system' as const,
-      content: SYSTEM_PROMPT,
-      providerOptions: {
-        anthropic: { cacheControl: { type: 'ephemeral' } },
-      },
-    },
-    ...(messages as any[]),
-  ]
-
   const result = streamText({
     model: anthropic('claude-sonnet-4-6'),
-    messages: allMessages,
+    system: SYSTEM_PROMPT,
+    messages: messages as any[],
     tools: streamingTools,
     stopWhen: stepCountIs(5),
     temperature: 0.3,
+    providerOptions: {
+      anthropic: { cacheControl: { type: 'ephemeral' } },
+    },
   })
 
   return result.toTextStreamResponse()
