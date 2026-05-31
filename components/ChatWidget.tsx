@@ -56,6 +56,14 @@ function currentTime() {
   return new Date().toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })
 }
 
+function extractText(msg: { parts?: Array<{ type: string; text?: string }> }): string {
+  if (!msg.parts) return ''
+  return msg.parts
+    .filter((p) => p.type === 'text' && typeof p.text === 'string')
+    .map((p) => p.text as string)
+    .join('')
+}
+
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false)
   const [showTeaser, setShowTeaser] = useState(true)
@@ -63,7 +71,10 @@ export function ChatWidget() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { messages, sendMessage, status } = useChat()
+  const { messages, sendMessage, status, error } = useChat({
+    onError: (err) => console.error('[Hvězdička] chyba:', err),
+  })
+
   const isLoading = status === 'submitted' || status === 'streaming'
 
   useEffect(() => {
@@ -71,9 +82,7 @@ export function ChatWidget() {
   }, [messages, isLoading])
 
   useEffect(() => {
-    if (isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 100)
-    }
+    if (isOpen) setTimeout(() => inputRef.current?.focus(), 100)
   }, [isOpen])
 
   const handleSend = (text: string) => {
@@ -88,22 +97,13 @@ export function ChatWidget() {
     handleSend(inputValue)
   }
 
-  const handleOpen = () => {
-    setIsOpen(true)
-    setShowTeaser(false)
-  }
-
   return (
     <>
       {!isOpen && (
         <div className="fs-launcher-wrap">
           {showTeaser && (
             <div className="fs-launch__teaser">
-              <button
-                className="fs-launch__teaser-close"
-                onClick={() => setShowTeaser(false)}
-                aria-label="Zavřít"
-              >
+              <button className="fs-launch__teaser-close" onClick={() => setShowTeaser(false)} aria-label="Zavřít">
                 <IconClose />
               </button>
               Ahoj, <span className="fs-script">já jsem</span> <b>Hvězdička</b><br />
@@ -113,7 +113,7 @@ export function ChatWidget() {
           )}
           <button
             className="fs-launch__b"
-            onClick={handleOpen}
+            onClick={() => { setIsOpen(true); setShowTeaser(false) }}
             aria-label="Otevřít chat asistenta"
           >
             <IconSparkle />
@@ -174,12 +174,11 @@ export function ChatWidget() {
               )}
 
               {messages.map((msg) => {
-                const text = msg.parts
-                  .filter((p) => p.type === 'text')
-                  .map((p) => (p as { type: 'text'; text: string }).text)
-                  .join('')
+                // tool role doesn't exist in UIMessage
 
-                if (!text && msg.role === 'assistant') return null
+                const text = extractText(msg as any)
+
+                if (msg.role === 'assistant' && !text) return null
 
                 return (
                   <div key={msg.id} className={`fs-m fs-m--${msg.role === 'user' ? 'user' : 'bot'}`}>
@@ -194,8 +193,16 @@ export function ChatWidget() {
               {isLoading && (
                 <div className="fs-m fs-m--bot">
                   <span className="fs-m__av"><IconSparkle /></span>
-                  <div className="fs-typ">
-                    <span /><span /><span />
+                  <div className="fs-typ"><span /><span /><span /></div>
+                </div>
+              )}
+
+              {error && !isLoading && (
+                <div className="fs-m fs-m--bot">
+                  <span className="fs-m__av"><IconSparkle /></span>
+                  <div className="fs-b" style={{ color: '#c0392b' }}>
+                    Omlouvám se, nastala chyba. Zkuste to prosím znovu nebo nás kontaktujte na{' '}
+                    <b>+420 776 230 887</b>.
                   </div>
                 </div>
               )}
