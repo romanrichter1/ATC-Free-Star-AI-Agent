@@ -71,13 +71,11 @@ export function ChatWidget() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { messages, sendMessage, status, error } = useChat({
+  const { messages, sendMessage, status } = useChat({
     onError: (err) => console.error('[Hvězdička] chyba:', err),
   })
 
   const isLoading = status === 'submitted' || status === 'streaming'
-  const lastMessage = messages[messages.length - 1]
-  const showError = !!error && !isLoading && lastMessage?.role !== 'assistant'
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -199,15 +197,6 @@ export function ChatWidget() {
                 </div>
               )}
 
-              {showError && (
-                <div className="fs-m fs-m--bot">
-                  <span className="fs-m__av"><IconSparkle /></span>
-                  <div className="fs-b" style={{ color: '#c0392b' }}>
-                    Omlouvám se, nastala chyba. Zkuste to prosím znovu nebo nás kontaktujte na{' '}
-                    <b>+420 776 230 887</b>.
-                  </div>
-                </div>
-              )}
 
               <div ref={messagesEndRef} />
             </div>
