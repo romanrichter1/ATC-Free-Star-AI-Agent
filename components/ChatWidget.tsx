@@ -75,10 +75,9 @@ export function ChatWidget() {
     onError: (err) => console.error('[Hvězdička] chyba:', err),
   })
 
+  const isLoading = status === 'submitted' || status === 'streaming'
   const lastMessage = messages[messages.length - 1]
   const showError = !!error && !isLoading && lastMessage?.role !== 'assistant'
-
-  const isLoading = status === 'submitted' || status === 'streaming'
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
