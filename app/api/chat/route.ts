@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     if (!Array.isArray(body?.messages)) {
       return new Response('Invalid request body', { status: 400 })
     }
-    coreMessages = convertToModelMessages(body.messages)
+    coreMessages = await convertToModelMessages(body.messages)
   } catch {
     return new Response('Invalid JSON', { status: 400 })
   }
