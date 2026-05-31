@@ -2,6 +2,7 @@
 
 import { useChat } from '@ai-sdk/react'
 import { useRef, useEffect, useState } from 'react'
+import { CalendarPicker } from './CalendarPicker'
 
 function IconStar() {
   return (
@@ -45,6 +46,19 @@ function currentTime() {
   return new Date().toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' })
 }
 
+// Parsuje text zprávy — extrahuje SHOW_CALENDAR marker a vrátí čistý text + config
+function parseMessage(raw: string): { text: string; calendar: { accommodation?: string; guests?: number } | null } {
+  const match = raw.match(/SHOW_CALENDAR:(\{[^}]+\})/)
+  if (!match) return { text: raw, calendar: null }
+  try {
+    const calendar = JSON.parse(match[1])
+    const text = raw.replace(/\s*SHOW_CALENDAR:\{[^}]+\}/, '').trim()
+    return { text, calendar }
+  } catch {
+    return { text: raw, calendar: null }
+  }
+}
+
 function extractText(msg: { parts?: Array<{ type: string; text?: string }> }): string {
   if (!msg.parts) return ''
   return msg.parts
@@ -55,6 +69,8 @@ function extractText(msg: { parts?: Array<{ type: string; text?: string }> }): s
 
 export function ChatWidgetEmbed() {
   const [inputValue, setInputValue] = useState('')
+  const [calendarConfig, setCalendarConfig] = useState<{ accommodation?: string; guests?: number } | null>(null)
+  const [calendarMsgId, setCalendarMsgId] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -64,9 +80,21 @@ export function ChatWidgetEmbed() {
 
   const isLoading = status === 'submitted' || status === 'streaming'
 
+  // Detekce SHOW_CALENDAR markeru v nové bot zprávě
+  useEffect(() => {
+    const lastMsg = messages[messages.length - 1]
+    if (!lastMsg || lastMsg.role !== 'assistant') return
+    const raw = extractText(lastMsg as any)
+    const { calendar } = parseMessage(raw)
+    if (calendar && lastMsg.id !== calendarMsgId) {
+      setCalendarConfig(calendar)
+      setCalendarMsgId(lastMsg.id)
+    }
+  }, [messages, calendarMsgId])
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages, isLoading])
+  }, [messages, isLoading, calendarConfig])
 
   useEffect(() => {
     setTimeout(() => inputRef.current?.focus(), 200)
@@ -75,8 +103,15 @@ export function ChatWidgetEmbed() {
   const handleSend = (text: string) => {
     const trimmed = text.trim()
     if (!trimmed || isLoading) return
+    setCalendarConfig(null)
     sendMessage({ text: trimmed })
     setInputValue('')
+  }
+
+  const handleCalendarConfirm = (dateFrom: string, dateTo: string, nights: number) => {
+    setCalendarConfig(null)
+    const nightsLabel = nights === 1 ? 'noc' : nights < 5 ? 'noci' : 'nocí'
+    handleSend(`📅 Termín: ${dateFrom} – ${dateTo} (${nights} ${nightsLabel})`)
   }
 
   const handleClose = () => {
@@ -133,17 +168,29 @@ export function ChatWidgetEmbed() {
         )}
 
         {messages.map((msg) => {
-          const text = extractText(msg as any)
-          if (msg.role === 'assistant' && !text) return null
+          const raw = extractText(msg as any)
+          if (msg.role === 'assistant' && !raw) return null
+
+          const { text } = msg.role === 'assistant' ? parseMessage(raw) : { text: raw }
+
           return (
             <div key={msg.id} className={`fs-m fs-m--${msg.role === 'user' ? 'user' : 'bot'}`}>
               {msg.role === 'assistant' && (
                 <span className="fs-m__av"><IconSparkle /></span>
               )}
-              <div className="fs-b">{text}</div>
+              <div className="fs-b" dangerouslySetInnerHTML={{ __html: text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
             </div>
           )
         })}
+
+        {/* Interaktivní kalendář */}
+        {calendarConfig && !isLoading && (
+          <CalendarPicker
+            accommodation={calendarConfig.accommodation}
+            guests={calendarConfig.guests}
+            onConfirm={handleCalendarConfirm}
+          />
+        )}
 
         {isLoading && (
           <div className="fs-m fs-m--bot">
