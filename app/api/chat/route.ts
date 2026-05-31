@@ -1,5 +1,5 @@
 // app/api/chat/route.ts
-import { streamText, stepCountIs } from 'ai'
+import { streamText, stepCountIs, convertToModelMessages } from 'ai'
 import { anthropic } from '@ai-sdk/anthropic'
 import { campsiteTools } from '@/lib/tools'
 import { CAMPSITE_INFO, buildFullFaqContent } from '@/lib/campsite-info'
@@ -48,6 +48,7 @@ export async function POST(req: NextRequest) {
       return new Response('Invalid request body', { status: 400 })
     }
     messages = body.messages
+    messages = convertToModelMessages(messages as any)
   } catch {
     return new Response('Invalid JSON', { status: 400 })
   }
