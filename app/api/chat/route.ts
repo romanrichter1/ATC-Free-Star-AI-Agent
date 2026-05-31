@@ -41,14 +41,13 @@ export async function POST(req: NextRequest) {
     return new Response('Too many requests', { status: 429 })
   }
 
-  let messages: unknown[]
+  let coreMessages
   try {
     const body = await req.json()
     if (!Array.isArray(body?.messages)) {
       return new Response('Invalid request body', { status: 400 })
     }
-    messages = body.messages
-    messages = convertToModelMessages(messages as any)
+    coreMessages = convertToModelMessages(body.messages)
   } catch {
     return new Response('Invalid JSON', { status: 400 })
   }
@@ -56,7 +55,7 @@ export async function POST(req: NextRequest) {
   const result = streamText({
     model: anthropic('claude-sonnet-4-6'),
     system: SYSTEM_PROMPT,
-    messages: messages as any[],
+    messages: coreMessages,
     tools: streamingTools,
     stopWhen: stepCountIs(5),
     temperature: 0.3,
