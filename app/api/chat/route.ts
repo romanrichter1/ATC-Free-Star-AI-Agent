@@ -34,18 +34,7 @@ function isRateLimited(ip: string): boolean {
 // Tools without getCampsiteInfo — FAQ is now in the system prompt
 const { getCampsiteInfo: _unused, ...streamingTools } = campsiteTools
 
-export async function GET() {
-  const hasKey = !!process.env.ANTHROPIC_API_KEY
-  const keyLen = process.env.ANTHROPIC_API_KEY?.length ?? 0
-  return Response.json({ hasKey, keyLen })
-}
-
 export async function POST(req: NextRequest) {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.error('ANTHROPIC_API_KEY is not set in this environment')
-    return new Response('API key not configured', { status: 500 })
-  }
-
   const ip = (req.headers.get('x-forwarded-for') ?? 'unknown').split(',')[0].trim()
 
   if (isRateLimited(ip)) {
