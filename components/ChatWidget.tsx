@@ -75,6 +75,9 @@ export function ChatWidget() {
     onError: (err) => console.error('[Hvězdička] chyba:', err),
   })
 
+  const lastMessage = messages[messages.length - 1]
+  const showError = !!error && !isLoading && lastMessage?.role !== 'assistant'
+
   const isLoading = status === 'submitted' || status === 'streaming'
 
   useEffect(() => {
@@ -197,7 +200,7 @@ export function ChatWidget() {
                 </div>
               )}
 
-              {error && !isLoading && (
+              {showError && (
                 <div className="fs-m fs-m--bot">
                   <span className="fs-m__av"><IconSparkle /></span>
                   <div className="fs-b" style={{ color: '#c0392b' }}>
