@@ -11,34 +11,6 @@ interface Props {
 const MONTHS_CS = ['Leden','Únor','Březen','Duben','Květen','Červen','Červenec','Srpen','Září','Říjen','Listopad','Prosinec']
 const DAYS_CS = ['Po','Út','St','Čt','Pá','So','Ne']
 
-const CSS = `
-.hv-cal { background:#fff; border:1px solid rgba(35,49,37,.10); border-radius:14px; padding:14px; box-shadow:0 1px 2px rgba(35,49,37,.05),0 6px 16px rgba(35,49,37,.08); margin-left:34px; }
-.hv-cal__h { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
-.hv-cal__t { font-family:'Playfair Display',Georgia,serif; font-size:17px; font-weight:700; color:#233125; }
-.hv-cal__nb { width:28px; height:28px; border-radius:8px; border:1px solid rgba(35,49,37,.10); background:#fff; cursor:pointer; font-size:16px; display:inline-flex; align-items:center; justify-content:center; color:#233125; }
-.hv-cal__nb:hover { background:#F2E9D4; }
-.hv-cal__g { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
-.hv-cal__dow { text-align:center; font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#9A9382; padding:4px 0; }
-.hv-cal__d { aspect-ratio:1; display:inline-flex; align-items:center; justify-content:center; font-size:13px; font-weight:500; color:#233125; border-radius:8px; background:transparent; border:none; cursor:pointer; font-family:inherit; width:100%; }
-.hv-cal__d:hover:not(:disabled) { background:#F2E9D4; }
-.hv-cal__d:disabled { color:#9A9382; opacity:.4; cursor:not-allowed; text-decoration:line-through; }
-.hv-cal__d.out { color:#9A9382; opacity:.3; cursor:default; pointer-events:none; }
-.hv-cal__d.today { font-weight:800; }
-.hv-cal__d.today::after { content:""; display:block; width:3px; height:3px; border-radius:999px; background:#C68E1C; margin:-2px auto 0; }
-.hv-cal__d.in-range { background:#F6E7BE; border-radius:0; }
-.hv-cal__d.is-start { background:#233125; color:#fff; border-radius:8px 0 0 8px; }
-.hv-cal__d.is-end { background:#233125; color:#fff; border-radius:0 8px 8px 0; }
-.hv-cal__d.is-start.is-end { border-radius:8px; }
-.hv-cal__rg { display:flex; align-items:center; gap:10px; background:#FBF2D9; border:1px solid #E0A82E; border-radius:14px; padding:10px 12px; margin-top:12px; }
-.hv-cal__rg-c { flex:1; }
-.hv-cal__rg-l { font-size:9px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; color:#6B6553; }
-.hv-cal__rg-v { font-size:14px; font-weight:700; color:#233125; margin-top:2px; }
-.hv-cal__rg-n { font-size:10px; font-weight:700; color:#233125; background:#fff; border:1px solid rgba(35,49,37,.10); border-radius:999px; padding:4px 9px; white-space:nowrap; }
-.hv-cal__confirm { width:100%; margin-top:10px; padding:12px; border-radius:999px; background:#C77A52; border:none; color:#fff; font-weight:700; font-size:14px; cursor:pointer; font-family:inherit; }
-.hv-cal__confirm:hover { background:#D38E66; }
-.hv-cal__hint { text-align:center; font-size:12px; color:#6B6553; margin-top:10px; }
-.hv-cal__sub { text-align:center; font-size:11px; color:#9A9382; margin-top:6px; }
-`
 
 function buildMonth(year: number, month: number) {
   const first = new Date(year, month, 1)
@@ -97,9 +69,7 @@ export function CalendarPicker({ onConfirm, guests = 2 }: Props) {
   }
 
   return (
-    <>
-      <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div className="hv-cal">
+    <div className="hv-cal">
         <div className="hv-cal__h">
           <button className="hv-cal__nb" onClick={prevMonth}>‹</button>
           <div className="hv-cal__t">{MONTHS_CS[month]} {year}</div>
@@ -147,6 +117,5 @@ export function CalendarPicker({ onConfirm, guests = 2 }: Props) {
           </div>
         )}
       </div>
-    </>
   )
 }
