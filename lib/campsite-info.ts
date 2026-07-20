@@ -19,9 +19,9 @@ export const CAMPSITE_INFO = {
     tent: 'Velký stan (3+ os.) 250 Kč/noc; Malý stan (max 2 os.) 200 Kč/noc',
     shelter: 'Přístřešek malý (do 2×2 m) 150 Kč/noc; Přístřešek velký 300 Kč/noc',
     caravan: 'Karavanové stání 590 Kč/noc (akce ve všední dny); Karavan/obytné auto nad 6 m 690 Kč/noc',
-    // Osoby
-    adult: 'Osoba nad 12 let +150 Kč/noc',
-    child: 'Dítě 3–12 let +130 Kč/noc; Dítě do 3 let ZDARMA',
+    // Osoby — příplatek POUZE u stanu a auta
+    adult: 'Osoba nad 12 let +150 Kč/noc (POUZE u stanu a auta; u mobilheimu, chatky, bungalovu a karavanu se příplatek za osoby NEPLATÍ)',
+    child: 'Dítě 3–12 let +130 Kč/noc (POUZE u stanu a auta); Dítě do 3 let ZDARMA',
     // Příplatky
     parking: 'Auto 150 Kč/noc; Motorka 120 Kč/noc',
     electricity: '150 Kč/noc (max 1 000 W, pouze drobné spotřebiče)',
@@ -49,7 +49,7 @@ export const CAMPSITE_INFO = {
   pets: 'Domácí zvířata vítána za příplatek 150 Kč/noc. Psi musí být na vodítku s náhubkem a mít platnou registrační známku. V areálu se psi nevenčí, koupání v bazénu je přísně zakázáno.',
   campfire: 'Rozdělávání ohně povoleno pouze na místech k tomu vyhrazených.',
   noise: 'Noční klid od 23:00 do 6:00. Opakované rušení = okamžitá výpověď bez náhrady.',
-  payment: 'Stany/karavany: platba předem za celý pobyt. Chatky/bungalovy/mobilheimy: 50% záloha předem, 50% při příjezdu. Rekreační poplatek (20 Kč/os./den) se hradí zvlášť.',
+  payment: 'Stany/karavany: platba předem za celý pobyt. Chatky/bungalovy/mobilheimy: 50% záloha předem, 50% při příjezdu. Místní poplatek obecnímu úřadu (20 Kč/os./den, osoby nad 18 let) se hradí zvlášť a platí u VŠECH typů ubytování. Příplatek za osobu (150 Kč/noc) platí pouze u stanu a auta — u chatky, bungalovu, mobilheimu a karavanu se neúčtuje.',
   cancellation: 'Storno více než 20 dní před příjezdem: 30 % z ceny. Méně než 10 dní před příjezdem: 50 % z ceny.',
   earlyDeparture: 'Odjezd před 8:00 musí být předem ohlášen.',
 
@@ -135,7 +135,9 @@ ${CAMPSITE_INFO.prices.shelter}
 ### Karavany
 ${CAMPSITE_INFO.prices.caravan}
 
-### Osoby (příplatek k ceně stání/objektu)
+### Osoby — příplatek za osobu
+DŮLEŽITÉ PRAVIDLO: Příplatek za osoby (150 Kč/noc dospělý, 130 Kč/noc dítě) platí POUZE u stanování a stání s autem.
+U mobilheimu, chatky, bungalovu a karavanu se příplatek za osoby NEPLATÍ — platí se jen místní poplatek obecnímu úřadu 20 Kč/osoba/den.
 - ${CAMPSITE_INFO.prices.adult}
 - ${CAMPSITE_INFO.prices.child}
 
